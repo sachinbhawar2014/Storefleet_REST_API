@@ -402,7 +402,8 @@
 
         "responses": {
           "200": { "description": "Products." },
-          "400": { "description": "Something went wrong." }
+          "400": { "description": "Something went wrong." },
+          "404": { "description": "No products found" }
         }
       }
     },
