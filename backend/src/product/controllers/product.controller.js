@@ -33,9 +33,10 @@ export const getAllProducts = async (req, res, next) => {
   // Implement the functionality for search, filter and pagination this function.
   try {
     const products = await getAllProductsRepo();
-    if (products.length > 0) {
-      res.status(200).json({ success: true, products });
+    if (products.length == 0) {
+      return next(new ErrorHandler(404, "No product found"));
     }
+    res.status(200).json({ success: true, products });
   } catch (error) {
     return next(new ErrorHandler(500, "Something went wrong."));
   }
