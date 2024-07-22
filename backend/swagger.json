@@ -12,7 +12,8 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3600"
+      "url": "https://storefleet-rest-api.onrender.com",
+      "description": "Development server"
     }
   ],
   "components": {
