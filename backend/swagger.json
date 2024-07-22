@@ -1,0 +1,940 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "description": "API documentation for Capstone Project - Storefleet, An instant product delivery service.",
+    "title": "Storefleet API",
+    "contact": {
+      "name": "Sachin Bhawar",
+      "email": "sachinbhavar@gmail.com",
+      "url": "https://www.linkedin.com/in/sachin-bhawar/"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "jwtInCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "token"
+      }
+    }
+  },
+  "paths": {
+    "/api/storefleet/user/signup": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Register a new user.",
+        "description": "Allows users to register by providing their name, email, password.",
+
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "201": { "description": "User registered successfully." },
+          "400": { "description": "Valid Name/email/password required" },
+          "409": { "description": "Email already registered." },
+          "400": { "description": "Something went wrong." }
+        }
+      }
+    },
+
+    "/api/storefleet/user/login": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Log in to the application Storefleet.",
+        "description": "Allows users to log in and user receives welcome email.",
+
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "200": { "description": "Signin successful." },
+          "400": { "description": "Please enter email/password" },
+          "401": { "description": "User not found! register yourself now!!" },
+          "400": { "description": "Something went wrong." }
+        }
+      }
+    },
+
+    "/api/storefleet/user/password/forget": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Initiates Process for reseting Password.",
+        "description": "Allows users use forget password feature in case user is registerd but forget password.",
+
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "200": { "description": "Please check Email for resetting your password" },
+          "400": { "description": "Please enter email" },
+          "404": { "description": "User not found!" },
+          "400": { "description": "Something went wrong." }
+        }
+      }
+    },
+
+    "/api/storefleet/user/password/reset/{token}": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Reset Password route initiates reset password feature.",
+        "description": "To reset Password user need to use key sent on their email. users get details of all users.",
+
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "User have to use token sent on registered email for reseting password.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": { "type": "string" },
+                  "confirmPassword": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "200": { "description": "password reset successful" },
+          "400": { "description": "password and confirm password do not match." },
+          "401": { "description": "teken expired/invalid token. please request for fresh token." },
+          "400": { "description": "Something went wrong while working with database" }
+        }
+      }
+    },
+
+    "/api/storefleet/user/password/update": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update Password route initiates password update feature.",
+        "description": "To update Password user allows user to change password. For this current password is required.",
+
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "currentPassword": { "type": "string" },
+                  "newPassword": { "type": "string" },
+                  "confirmPassword": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ],
+
+        "responses": {
+          "200": { "description": "Password Change successful" },
+          "400": { "description": "Mismatch new password and confirm password!" },
+          "401": { "description": "Pls enter current password/Incorrect current password!" },
+          "400": { "description": "Something went wrong while working with database" }
+        }
+      }
+    },
+
+    "/api/storefleet/user/profile/update": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update Profile route feature allows user to change name and email.",
+        "description": "User can change name and email after registration. New email should be unique.",
+
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ],
+
+        "responses": {
+          "200": { "description": "Profile Updated successfully" },
+          "409": { "description": "Email already registed. Use different Email" },
+          "400": { "description": "Valid name/email is required." }
+        }
+      }
+    },
+
+    "/api/storefleet/user/details": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get details of logged in user.",
+        "description": "Allows users to see his/her own details.",
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ],
+
+        "responses": {
+          "200": { "description": "Details." },
+          "400": { "description": "Something went wrong." }
+        }
+      }
+    },
+
+    "/api/storefleet/user/logout": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Logout From to the application.",
+        "description": "Allows users logout.",
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ],
+
+        "responses": {
+          "200": { "description": "Logout successful." }
+        }
+      }
+    },
+
+    "/api/storefleet/user/admin/allusers": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get details of all users for admin.",
+        "description": "Admin can access all details of all users.",
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ],
+
+        "responses": {
+          "200": { "description": "All Details." },
+          "401": { "description": "Login to access this route." },
+          "403": { "description": "Role: user is not allowed to access this resource" },
+          "400": { "description": "Something went wrong." }
+        }
+      }
+    },
+
+    "/api/storefleet/user/admin/details/{userId}": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get details of a perticular user for admin.",
+        "description": "Admin can access all details of a user.",
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ],
+
+        "responses": {
+          "200": { "description": "All Details." },
+          "401": { "description": "Login to access this route." },
+          "403": { "description": "Role: user is not allowed to access this resource" },
+          "400": { "description": "Something went wrong." }
+        },
+
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "To fetch details of the user, user is identified by userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+
+    "/api/storefleet/user/admin/delete/{userId}": {
+      "delete": {
+        "tags": ["Admin"],
+        "summary": "Delete User.",
+        "description": "Admin can delete perticular user using this route.",
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ],
+
+        "responses": {
+          "200": { "description": "user deleted successfully." },
+          "400": { "description": "no user found with provided id." },
+          "400": { "description": "Something went wrong." }
+        },
+
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "To delete the user, user is identified by userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+
+    "/api/storefleet/user/admin/update/{userId}": {
+      "put": {
+        "tags": ["Admin"],
+        "summary": "Update user profile and Role by admin.",
+        "description": "Admin can update role and profile of perticular user using this route.",
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ],
+
+        "responses": {
+          "200": { "description": "user profile and role updated successfully." },
+          "400": { "description": "no user found with provided id." },
+          "400": { "description": "Something went wrong." }
+        },
+
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "To update the user role and profile, user is identified by userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "role": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/storefleet/product/products/all": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Get details about all products by anyone.",
+        "description": "This route provide details of all products and allows access to all ",
+
+        "responses": {
+          "200": { "description": "Products." },
+          "400": { "description": "Something went wrong." }
+        }
+      }
+    },
+
+    "/api/storefleet/product/products": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Filter products based on various criteria",
+        "description": "Allows filtering products by category, price range, and rating range.",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "description": "Product category",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "enum": [
+              "Mobile",
+              "Electronics",
+              "Clothing",
+              "Home & Garden",
+              "Automotive",
+              "Health & Beauty",
+              "Sports & Outdoors",
+              "Toys & Games",
+              "Books & Media",
+              "Jewelry",
+              "Food & Grocery",
+              "Furniture",
+              "Shoes",
+              "Pet Supplies",
+              "Office Supplies",
+              "Baby & Kids",
+              "Art & Collectibles",
+              "Travel & Luggage",
+              "Music Instruments",
+              "Electrical Appliances",
+              "Handmade Crafts"
+            ]
+          },
+          {
+            "name": "price[gte]",
+            "in": "query",
+            "description": "Minimum price",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "price[lte]",
+            "in": "query",
+            "description": "Maximum price",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "rating[gte]",
+            "in": "query",
+            "description": "Minimum rating",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "rating[lte]",
+            "in": "query",
+            "description": "Maximum rating",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+
+        "responses": {
+          "200": { "description": "Filtered Products." },
+          "404": { "description": "No Products found!" },
+          "500": { "description": "Something went wrong." }
+        },
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ]
+      }
+    },
+
+    "/api/storefleet/product/details/{productId}": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Get details about specific product by anyone.",
+        "description": "This route provide details of specific product and allows access to all ",
+
+        "responses": {
+          "200": { "description": "Product details." },
+          "400": { "description": "Product not found." },
+          "500": { "description": "Something went wrong." }
+        },
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "To fetch details of the product, it is identified by productId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+
+    "/api/storefleet/product/reviews/{productId}": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Get reviews about specific product by anyone.",
+        "description": "This route provide reviews of specific product and allows access to all ",
+
+        "responses": {
+          "200": { "description": "Reviews" },
+          "404": { "description": "Product not found!." },
+          "500": { "description": "Something went wrong." }
+        },
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "To fetch details of the product, it is identified by productId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+
+    "/api/storefleet/product/review/delete": {
+      "delete": {
+        "tags": ["Products"],
+        "summary": "Delete review about specific product by registerd user.",
+        "description": "This route provide feature of deleting existing review.",
+
+        "responses": {
+          "200": { "description": "review deleted successfully" },
+          "400": { "description": "Review doesn't exists." },
+          "404": { "description": "Product not found!." },
+          "401": { "description": "Only review owner can delete this review." },
+          "500": { "description": "Something went wrong." }
+        },
+
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "query",
+            "description": "The ID of the product whose review needs to be deleted.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reviewId",
+            "in": "query",
+            "description": "The ID of the review to delete.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ]
+      }
+    },
+
+    "/api/storefleet/product/rate/{productId}": {
+      "put": {
+        "tags": ["Products"],
+        "summary": "Rate specific product By registered User.",
+        "description": "This route provide feature to rate specific product and allows access to registered users.",
+
+        "responses": {
+          "201": { "description": "Thanks for rating the product" },
+          "400": { "description": "Product not found/Rating can't be empty" },
+          "500": { "description": "Something went wrong." }
+        },
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ],
+
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rating": { "type": "number" },
+                  "comment": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "To fetch details of the product, it is identified by productId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+
+    "/api/storefleet/product/add": {
+      "post": {
+        "tags": ["Products (Admin)"],
+        "summary": "Add product by admin.",
+        "description": "This route provide feature of adding product and allows access to admins only. Catagory must be one of \n ['Mobile', 'Electronics', 'Clothing', 'Home & Garden', 'Automotive', 'Health & Beauty', 'Sports & Outdoors', 'Toys & Games', 'Books & Media', 'Jewelry', 'Food & Grocery', 'Furniture', 'Shoes', 'Pet Supplies', 'Office Supplies', 'Baby & Kids', 'Art & Collectibles', 'Travel & Luggage', 'Music Instruments', 'Electrical Appliances', 'Handmade Crafts']",
+
+        "responses": {
+          "201": { "description": "Product" },
+          "400": { "description": "some error occured!" },
+          "500": { "description": "Something went wrong." }
+        },
+
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "price": { "type": "number" },
+                  "category": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ]
+      }
+    },
+
+    "/api/storefleet/product/update/{productId}": {
+      "put": {
+        "tags": ["Products (Admin)"],
+        "summary": "Update specific product By Admin.",
+        "description": "This route provide feature to update specific product and allows access to admins only.",
+
+        "responses": {
+          "200": { "description": "Updated Product details." },
+          "400": { "description": "Product not found." },
+          "500": { "description": "Something went wrong." }
+        },
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ],
+
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "To fetch details of the product, it is identified by productId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "price": { "type": "number" },
+                  "images": { "public_id": { "type": "string" }, "url": { "type": "string" } },
+                  "category": { "type": "string" },
+                  "stock": { "type": "number" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/storefleet/product/delete/{productId}": {
+      "delete": {
+        "tags": ["Products (Admin)"],
+        "summary": "Delete specific product By Admin.",
+        "description": "This route provide feature to delete specific product and allows access to admins only.",
+
+        "responses": {
+          "200": { "description": "Product details." },
+          "400": { "description": "Product not found." },
+          "500": { "description": "Something went wrong." }
+        },
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ],
+
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "To fetch details of the product, it is identified by productId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+
+    "/api/storefleet/order/new": {
+      "post": {
+        "tags": ["Order"],
+        "summary": "Place Order by registered user.",
+        "description": "This route provides feature to place order. User has to login to use this route.",
+
+        "responses": {
+          "201": { "description": "Order Placed." },
+          "400": {
+            "description": "There are no items in the orderedtItems. Please select items and then place order."
+          },
+          "500": { "description": "Something went wrong." }
+        },
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ],
+
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "shippingInfo": {
+                    "type": "object",
+                    "properties": {
+                      "address": { "type": "string" },
+                      "city": { "type": "string" },
+                      "state": { "type": "string" },
+                      "country": { "type": "string", "default": "IN" },
+                      "pincode": { "type": "number" },
+                      "phoneNumber": { "type": "number" }
+                    },
+                    "required": ["address", "city", "state", "country", "pincode", "phoneNumber"]
+                  },
+                  "orderedItems": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "product": { "type": "string" },
+                        "quantity": { "type": "number" }
+                      },
+                      "required": ["product", "quantity"]
+                    }
+                  }
+                },
+                "required": ["shippingInfo", "orderedItems"]
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/storefleet/order/{orderId}": {
+      "get": {
+        "tags": ["Order"],
+        "summary": "Get Order by its id. Registered user can retrieve their existing order.",
+        "description": "This route provides feature to retrieve order that registered User has placed",
+
+        "responses": {
+          "200": { "description": "Placed Order retrieved." },
+          "401": { "description": "Only admin or users who have placed this order can view this order." },
+          "404": {
+            "description": "Order not found!"
+          },
+          "500": { "description": "Something went wrong." }
+        },
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ],
+
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "To fetch order, it is identified by orderId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+
+    "/api/storefleet/order/my/orders": {
+      "get": {
+        "tags": ["Order"],
+        "summary": "Get Orders by placed registered user.",
+        "description": "This route provides feature to retrieve all orders that registered User has placed",
+
+        "responses": {
+          "200": { "description": "My Orders retrieved." },
+          "404": {
+            "description": "Order not found!"
+          },
+          "500": { "description": "Something went wrong." }
+        },
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ]
+      }
+    },
+
+    "/api/storefleet/order/orders/placed": {
+      "get": {
+        "tags": ["Order"],
+        "summary": "Get all Orders by placed registered user for admin.",
+        "description": "This route provides feature to retrieve all orders that registered User has placed for admin",
+
+        "responses": {
+          "200": { "description": "All Orders retrieved." },
+          "404": {
+            "description": "No Orders yet!"
+          },
+          "500": { "description": "Something went wrong." }
+        },
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ]
+      }
+    },
+
+    "/api/storefleet/order/update/{orderId}": {
+      "put": {
+        "tags": ["Order"],
+        "summary": "Update Order details by admin.",
+        "description": "This route provides feature for admin to update details of the order",
+
+        "responses": {
+          "200": { "description": "Orders details Updated." },
+          "404": {
+            "description": "No Orders yet!"
+          },
+          "500": { "description": "Something went wrong." }
+        },
+
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "To fetch order, it is identified by orderId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "security": [
+          {
+            "jwtInCookie": []
+          }
+        ],
+
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "orderStatus": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
